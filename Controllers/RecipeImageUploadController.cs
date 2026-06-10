@@ -34,8 +34,10 @@ public class RecipeImageUploadController(IHttpClientFactory _httpClientFactory, 
             var response = await client.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
-                return StatusCode(500, "Failed to upload image to Supabase Storage");
-
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                return StatusCode(500, $"Supabase upload failed ({(int)response.StatusCode}): {errorBody}");
+            }
             string publicUrl = $"{supabaseUrl}/storage/v1/object/public/recipe-images/{uniqueFileName}";
             return Ok(new { url = publicUrl });
         }
