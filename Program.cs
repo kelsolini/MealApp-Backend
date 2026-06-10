@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 /* CONTEXT / DATABASE */
 builder.Services.AddDbContext<MealAppContext>(
-    options => options.UseSqlite("Data Source=Databases/MealApp.db")
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 builder.Services.AddControllers();
@@ -13,11 +13,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddCors();
 
 var app = builder.Build();
-
-/* DATABASE SETUP */
-// Sørg for at mappa til databasefila finnes (git sporer ikke tomme mapper,
-// så på Render eksisterer ikke Databases/ før vi lager den)
-Directory.CreateDirectory("Databases");
 
 // Kjør migrasjonene ved oppstart — lager databasen og tabellene hvis de mangler.
 // Lokalt gjør den ingenting hvis alt allerede er oppdatert.
