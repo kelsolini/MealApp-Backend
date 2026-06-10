@@ -14,6 +14,19 @@ builder.Services.AddCors();
 
 var app = builder.Build();
 
+/* DATABASE SETUP */
+// Sørg for at mappa til databasefila finnes (git sporer ikke tomme mapper,
+// så på Render eksisterer ikke Databases/ før vi lager den)
+Directory.CreateDirectory("Databases");
+
+// Kjør migrasjonene ved oppstart — lager databasen og tabellene hvis de mangler.
+// Lokalt gjør den ingenting hvis alt allerede er oppdatert.
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<MealAppContext>();
+    context.Database.Migrate();
+}
+
 /* CORS CONFIG */
 app.UseCors(policy => policy
     .AllowAnyOrigin()
