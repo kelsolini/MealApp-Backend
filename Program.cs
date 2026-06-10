@@ -11,6 +11,7 @@ builder.Services.AddDbContext<MealAppContext>(
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddCors();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
