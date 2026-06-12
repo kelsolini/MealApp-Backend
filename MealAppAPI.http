@@ -10,7 +10,7 @@ POST {{MealAppAPI_HostAddress}}/api/import/url
 Content-Type: application/json
 
 {
-  "url": "https://www.matprat.no/oppskrifter/gjester/kyllingpasta-med-asparges-og-parmesan/"
+  "url": "https://www.matprat.no/oppskrifter/tradisjon/smalahove/"
 }
 
 ###
