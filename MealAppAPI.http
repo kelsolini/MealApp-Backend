@@ -4,3 +4,13 @@ GET {{MealAppAPI_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+### Import oppskrift fra URL
+POST {{MealAppAPI_HostAddress}}/api/import/url
+Content-Type: application/json
+
+{
+  "url": "https://www.matprat.no/oppskrifter/gjester/kyllingpasta-med-asparges-og-parmesan/"
+}
+
+###

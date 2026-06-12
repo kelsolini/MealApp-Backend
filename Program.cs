@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MealAppAPI.Context;
+using MealAppAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,12 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddCors();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("import", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; MealAppBot/1.0)");
+});
+builder.Services.AddScoped<IRecipeImportService, RecipeImportService>();
 
 var app = builder.Build();
 
