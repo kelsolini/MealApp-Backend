@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class Recipe
 {
+    public Guid? UserId { get; set; }
     public int Id { get; set; }
     [Required]
     [MinLength(1)]

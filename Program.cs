@@ -2,7 +2,48 @@ using Microsoft.EntityFrameworkCore;
 using MealAppAPI.Context;
 using MealAppAPI.Services;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
 var builder = WebApplication.CreateBuilder(args);
+
+/* AUTHENTICATION */
+var supabaseUrl = builder.Configuration["Supabase:Url"]
+    ?? throw new InvalidOperationException("Supabase:Url mangler");
+
+// Hent Supabase sine offentlige signeringsnøkler (JWKS) ved oppstart.
+// Prosjektet signerer tokens asymmetrisk (ES256), så backend trenger
+// bare de offentlige nøklene for å verifisere – ingen delt secret.
+using var jwksClient = new HttpClient();
+var jwksJson = await jwksClient.GetStringAsync(
+    $"{supabaseUrl}/auth/v1/.well-known/jwks.json");
+var jwks = new JsonWebKeySet(jwksJson);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = $"{supabaseUrl}/auth/v1",
+            ValidateAudience = true,
+            ValidAudience = "authenticated",
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKeys = jwks.GetSigningKeys()
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = ctx =>
+            {
+                Console.WriteLine($">>> JWT FEIL: {ctx.Exception.Message}");
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 /* CONTEXT / DATABASE */
 builder.Services.AddDbContext<MealAppContext>(
@@ -48,6 +89,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
