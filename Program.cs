@@ -73,7 +73,7 @@ using (var scope = app.Services.CreateScope())
 
 /* CORS CONFIG */
 app.UseCors(policy => policy
-    .AllowAnyOrigin()
+    .WithOrigins("http://localhost:5173", "https://meal-app-frontend-two.vercel.app")
     .AllowAnyMethod()
     .AllowAnyHeader()
 );

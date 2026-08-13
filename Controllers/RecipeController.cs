@@ -6,6 +6,7 @@ using MealAppAPI.Context;
 using Microsoft.AspNetCore.Authorization;
 using MealAppApi.Extensions;
 using MealAppAPI.DTOs;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace MealAppAPI.Controllers;
 
